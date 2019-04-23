@@ -3,7 +3,6 @@ stamp-bower
 version.txt
 node_modules
 bower_components
-dist
 strophejs-*/
 ndproj
 doc
