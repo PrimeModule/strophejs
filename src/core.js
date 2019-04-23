@@ -4,11 +4,12 @@
 
     Copyright 2006-2018, OGG, LLC
 */
-/*global define, document, sessionStorage, setTimeout, clearTimeout, ActiveXObject, DOMParser, btoa, atob, module */
+/*global define, document, sessionStorage, ActiveXObject, DOMParser, btoa, atob, module */
 
 import MD5 from 'md5';
 import SHA1 from 'sha1';
 import utils from 'utils';
+import * as workerTimers from 'worker-timers';
 
 /** Function: $build
  *  Create a Strophe.Builder.
@@ -1589,7 +1590,7 @@ Strophe.Connection = function (service, options) {
     this.maxRetries = 5;
 
     // Call onIdle callback every 1/10th of a second
-    this._idleTimeout = setTimeout(() => this._onIdle(), 100);
+    this._idleTimeout = workerTimers.setTimeout(() => this._onIdle(), 100);
 
     utils.addCookies(this.options.cookies);
     this.registerSASLMechanisms(this.options.mechanisms);
@@ -2024,7 +2025,7 @@ Strophe.Connection.prototype = {
     flush: function () {
         // cancel the pending idle period and run the idle function
         // immediately
-        clearTimeout(this._idleTimeout);
+        workerTimers.clearTimeout(this._idleTimeout);
         this._onIdle();
     },
 
@@ -2172,7 +2173,7 @@ Strophe.Connection.prototype = {
     _sendRestart: function () {
         this._data.push("restart");
         this._proto._sendRestart();
-        this._idleTimeout = setTimeout(() => this._onIdle(), 100);
+        this._idleTimeout = workerTimers.setTimeout(() => this._onIdle(), 100);
     },
 
     /** Function: addTimedHandler
@@ -2428,7 +2429,7 @@ Strophe.Connection.prototype = {
      */
     _doDisconnect: function (condition) {
         if (typeof this._idleTimeout === "number") {
-            clearTimeout(this._idleTimeout);
+            workerTimers.clearTimeout(this._idleTimeout);
         }
 
         // Cancel Disconnect Timeout
@@ -3156,12 +3157,12 @@ Strophe.Connection.prototype = {
             }
         }
         this.timedHandlers = newList;
-        clearTimeout(this._idleTimeout);
+        workerTimers.clearTimeout(this._idleTimeout);
         this._proto._onIdle();
 
         // reactivate the timer only if connected
         if (this.connected) {
-            this._idleTimeout = setTimeout(() => this._onIdle(), 100);
+            this._idleTimeout = workerTimers.setTimeout(() => this._onIdle(), 100);
         }
     }
 };

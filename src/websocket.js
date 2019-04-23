@@ -5,9 +5,10 @@
     Copyright 2006-2008, OGG, LLC
 */
 
-/* global window, clearTimeout, WebSocket, DOMParser */
+/* global window, WebSocket, DOMParser */
 
 import core from 'core';
+import * as workerTimers from 'worker-timers';
 
 const Strophe = core.Strophe;
 const $build = core.$build;
@@ -541,7 +542,7 @@ Strophe.Websocket.prototype = {
      *  Send an xmpp:restart stanza.
      */
     _sendRestart: function () {
-        clearTimeout(this._conn._idleTimeout);
+        workerTimers.clearTimeout(this._conn._idleTimeout);
         this._conn._onIdle.bind(this._conn)();
     }
 };

@@ -5,9 +5,10 @@
     Copyright 2006-2008, OGG, LLC
 */
 
-/* global window, setTimeout, clearTimeout, XMLHttpRequest, ActiveXObject */
+/* global window, XMLHttpRequest, ActiveXObject */
 
 import core from 'core';
+import * as workerTimers from 'worker-timers';
 
 const Strophe = core.Strophe;
 const $build = core.$build;
@@ -762,7 +763,7 @@ Strophe.Bosh.prototype = {
                 // expanding retry window
                 const backoff = Math.min(Math.floor(Strophe.TIMEOUT * this.wait),
                                        Math.pow(req.sends, 3)) * 1000;
-                setTimeout(function() {
+                workerTimers.setTimeout(function() {
                     // XXX: setTimeout should be called only with function expressions (23974bc1)
                     sendFunc();
                 }, backoff);
@@ -871,9 +872,9 @@ Strophe.Bosh.prototype = {
      * Just triggers the RequestHandler to send the messages that are in the queue
      */
     _send: function () {
-        clearTimeout(this._conn._idleTimeout);
+        workerTimers.clearTimeout(this._conn._idleTimeout);
         this._throttledRequestHandler();
-        this._conn._idleTimeout = setTimeout(() => this._conn._onIdle(), 100);
+        this._conn._idleTimeout = workerTimers.setTimeout(() => this._conn._onIdle(), 100);
     },
 
     /** PrivateFunction: _sendRestart
@@ -882,7 +883,7 @@ Strophe.Bosh.prototype = {
      */
     _sendRestart: function () {
         this._throttledRequestHandler();
-        clearTimeout(this._conn._idleTimeout);
+        workerTimers.clearTimeout(this._conn._idleTimeout);
     },
 
     /** PrivateFunction: _throttledRequestHandler
