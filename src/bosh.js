@@ -872,7 +872,10 @@ Strophe.Bosh.prototype = {
      * Just triggers the RequestHandler to send the messages that are in the queue
      */
     _send: function () {
-        workerTimers.clearTimeout(this._conn._idleTimeout);
+        try {
+            workerTimers.clearTimeout(this._conn._idleTimeout);
+        } catch(exception) {}
+
         this._throttledRequestHandler();
         this._conn._idleTimeout = workerTimers.setTimeout(() => this._conn._onIdle(), 100);
     },
@@ -883,7 +886,9 @@ Strophe.Bosh.prototype = {
      */
     _sendRestart: function () {
         this._throttledRequestHandler();
-        workerTimers.clearTimeout(this._conn._idleTimeout);
+        try {
+            workerTimers.clearTimeout(this._conn._idleTimeout);
+        } catch(exception) {}
     },
 
     /** PrivateFunction: _throttledRequestHandler

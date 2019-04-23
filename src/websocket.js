@@ -542,7 +542,9 @@ Strophe.Websocket.prototype = {
      *  Send an xmpp:restart stanza.
      */
     _sendRestart: function () {
-        workerTimers.clearTimeout(this._conn._idleTimeout);
+        try {
+            workerTimers.clearTimeout(this._conn._idleTimeout);
+        } catch(exception) {}
         this._conn._onIdle.bind(this._conn)();
     }
 };

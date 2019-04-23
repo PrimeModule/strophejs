@@ -2025,7 +2025,9 @@ Strophe.Connection.prototype = {
     flush: function () {
         // cancel the pending idle period and run the idle function
         // immediately
-        workerTimers.clearTimeout(this._idleTimeout);
+        try {
+            workerTimers.clearTimeout(this._idleTimeout);
+        } catch(exception) {}
         this._onIdle();
     },
 
@@ -2429,7 +2431,9 @@ Strophe.Connection.prototype = {
      */
     _doDisconnect: function (condition) {
         if (typeof this._idleTimeout === "number") {
-            workerTimers.clearTimeout(this._idleTimeout);
+            try {
+                workerTimers.clearTimeout(this._idleTimeout);
+            } catch(exception) {}
         }
 
         // Cancel Disconnect Timeout
@@ -3157,7 +3161,9 @@ Strophe.Connection.prototype = {
             }
         }
         this.timedHandlers = newList;
-        workerTimers.clearTimeout(this._idleTimeout);
+        try {
+            workerTimers.clearTimeout(this._idleTimeout);
+        } catch(exception) {}
         this._proto._onIdle();
 
         // reactivate the timer only if connected
